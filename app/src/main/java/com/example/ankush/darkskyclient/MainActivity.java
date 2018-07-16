@@ -3,6 +3,7 @@ package com.example.ankush.darkskyclient;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +18,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -29,6 +33,14 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.temTextView)
     TextView temTextView;
+
+    @BindView(R.id.summaryTextView)
+    TextView summaryTextView;
+
+    @BindView(R.id.iconImageView)
+    ImageView iconImageView;
+
+    double temp;
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -43,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        requestCurrentWeather(32.0760,72.8777);
+        requestCurrentWeather(12.0760,52.8777);
     }
 
     @Override
@@ -61,7 +73,29 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onWeatherEvent(WeatherEvent weatherEvent) {
         Currently currently = weatherEvent.getWeather().getCurrently();
-        temTextView.setText(String.valueOf(Math.round(currently.getTemperature())));
+        temp = currently.getTemperature();
+        temp = (temp - 32) * 5/9;
+
+        temTextView.setText(String.valueOf(Math.round(temp)));
+
+        summaryTextView.setText(currently.getSummary());
+
+        Map<String, Integer> iconMap = new HashMap<>();
+        iconMap.put("clear-day", R.drawable.clear_day);
+        iconMap.put("clear-night", R.drawable.clear_night);
+        iconMap.put("cloudy", R.drawable.cloudy);
+        iconMap.put("partly-cloudy-day", R.drawable.partly_cloudy_day);
+        iconMap.put("partly-cloudy-night", R.drawable.partly_cloudy_night);
+        iconMap.put("rain", R.drawable.rain);
+        iconMap.put("snow", R.drawable.snow);
+        iconMap.put("thunderstorm", R.drawable.thunderstorm);
+        iconMap.put("sleet", R.drawable.sleet);
+        iconMap.put("wind", R.drawable.wind);
+        iconMap.put("fog", R.drawable.fog);
+
+
+
+        iconImageView.setImageResource(iconMap.get(currently.getIcon()));
     };
 
     @Subscribe(threadMode = ThreadMode.MAIN)
