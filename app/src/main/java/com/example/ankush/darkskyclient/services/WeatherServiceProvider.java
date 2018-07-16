@@ -29,22 +29,10 @@ public class WeatherServiceProvider {
 
     }
 
-    public void getWeather(double lat, double lng){
+    public void getWeather(double lat, double lng, Callback callback){
         WeatherService weatherService = getRetrofit().create(WeatherService.class);
         Call<Weather> weatherData = weatherService.getWeather(lat, lng);
-        weatherData.enqueue(new Callback<Weather>() {
-            @Override
-            public void onResponse(Call<Weather> call, Response<Weather> response) {
-                Currently currently = response.body().getCurrently();
-                Log.e(TAG,"Temparature : " + currently.getTemperature());
-            }
-
-            @Override
-            public void onFailure(Call<Weather> call, Throwable t) {
-                Log.e(TAG,"onFailure : unable to get Weather Data");
-
-            }
-        });
+        weatherData.enqueue(callback);
     }
 
 }

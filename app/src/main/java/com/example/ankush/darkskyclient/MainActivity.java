@@ -29,16 +29,34 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         //temTextView = findViewById(R.id.temTextView);
-        ButterKnife.bind(this);
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ButterKnife.bind(this);
 
         requestCurrentWeather(32.0760,72.8777);
     }
 
     private void requestCurrentWeather(double lat, double lng) {
         WeatherServiceProvider weatherServiceProvider = new WeatherServiceProvider();
-        weatherServiceProvider.getWeather(lat,lng);
+
+        Callback callback = new Callback<Weather>() {
+            @Override
+            public void onResponse(Call<Weather> call, Response<Weather> response) {
+                Currently currently = response.body().getCurrently();
+                Log.e(TAG,"Temparature : " + currently.getTemperature());
+                temTextView.setText(String.valueOf(currently.getTemperature()));
+            }
+
+            @Override
+            public void onFailure(Call<Weather> call, Throwable t) {
+                Log.e(TAG,"onFailure : unable to get Weather Data");
+
+            }
+        };
+
+        weatherServiceProvider.getWeather(lat,lng, callback);
     }
 }
