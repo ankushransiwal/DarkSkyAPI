@@ -3,6 +3,7 @@ package com.example.ankush.darkskyclient;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.example.ankush.darkskyclient.models.Currently;
 import com.example.ankush.darkskyclient.models.Weather;
@@ -17,10 +18,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+    TextView temTextView;
+
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        temTextView = findViewById(R.id.temTextView);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
