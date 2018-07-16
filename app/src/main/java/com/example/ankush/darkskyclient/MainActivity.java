@@ -5,10 +5,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.example.ankush.darkskyclient.events.WeatherEvent;
 import com.example.ankush.darkskyclient.models.Currently;
 import com.example.ankush.darkskyclient.models.Weather;
 import com.example.ankush.darkskyclient.services.WeatherService;
 import com.example.ankush.darkskyclient.services.WeatherServiceProvider;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,24 +44,26 @@ public class MainActivity extends AppCompatActivity {
         requestCurrentWeather(32.0760,72.8777);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onWeatherEvent(WeatherEvent weatherEvent) {
+        Currently currently = weatherEvent.getWeather().getCurrently();
+        temTextView.setText(String.valueOf(Math.round(currently.getTemperature())));
+    };
+
     private void requestCurrentWeather(double lat, double lng) {
         WeatherServiceProvider weatherServiceProvider = new WeatherServiceProvider();
-
-        Callback callback = new Callback<Weather>() {
-            @Override
-            public void onResponse(Call<Weather> call, Response<Weather> response) {
-                Currently currently = response.body().getCurrently();
-                Log.e(TAG,"Temparature : " + currently.getTemperature());
-                temTextView.setText(String.valueOf(currently.getTemperature()));
-            }
-
-            @Override
-            public void onFailure(Call<Weather> call, Throwable t) {
-                Log.e(TAG,"onFailure : unable to get Weather Data");
-
-            }
-        };
-
-        weatherServiceProvider.getWeather(lat,lng, callback);
+        weatherServiceProvider.getWeather(lat,lng);
     }
 }

@@ -2,8 +2,11 @@ package com.example.ankush.darkskyclient.services;
 
 import android.util.Log;
 
+import com.example.ankush.darkskyclient.events.WeatherEvent;
 import com.example.ankush.darkskyclient.models.Currently;
 import com.example.ankush.darkskyclient.models.Weather;
+
+import org.greenrobot.eventbus.EventBus;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,10 +32,24 @@ public class WeatherServiceProvider {
 
     }
 
-    public void getWeather(double lat, double lng, Callback callback){
+    public void getWeather(double lat, double lng){
         WeatherService weatherService = getRetrofit().create(WeatherService.class);
         Call<Weather> weatherData = weatherService.getWeather(lat, lng);
-        weatherData.enqueue(callback);
+        weatherData.enqueue(new Callback<Weather>() {
+            @Override
+            public void onResponse(Call<Weather> call, Response<Weather> response) {
+                Weather weather = response.body();
+                Currently currently = weather.getCurrently();
+                Log.e(TAG,"Temparature : " + currently.getTemperature());
+                EventBus.getDefault().post(new WeatherEvent(weather));
+            }
+
+            @Override
+            public void onFailure(Call<Weather> call, Throwable t) {
+                Log.e(TAG,"onFailure : unable to get Weather Data");
+
+            }
+        });
     }
 
 }
