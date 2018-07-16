@@ -1,7 +1,9 @@
 package com.example.ankush.darkskyclient.services;
 
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.ankush.darkskyclient.events.EventError;
 import com.example.ankush.darkskyclient.events.WeatherEvent;
 import com.example.ankush.darkskyclient.models.Currently;
 import com.example.ankush.darkskyclient.models.Weather;
@@ -38,15 +40,23 @@ public class WeatherServiceProvider {
         weatherData.enqueue(new Callback<Weather>() {
             @Override
             public void onResponse(Call<Weather> call, Response<Weather> response) {
+
                 Weather weather = response.body();
-                Currently currently = weather.getCurrently();
-                Log.e(TAG,"Temparature : " + currently.getTemperature());
-                EventBus.getDefault().post(new WeatherEvent(weather));
+                if(weather != null){
+                    Currently currently = weather.getCurrently();
+                    Log.e(TAG,"Temparature : " + currently.getTemperature());
+                    EventBus.getDefault().post(new WeatherEvent(weather));
+                }else{
+                    Log.e(TAG,"No response : Check secret key");
+                    EventBus.getDefault().post(new EventError("No weather data available"));
+                }
+
             }
 
             @Override
             public void onFailure(Call<Weather> call, Throwable t) {
                 Log.e(TAG,"onFailure : unable to get Weather Data");
+                EventBus.getDefault().post(new EventError("Unable to connect to Internet"));
 
             }
         });

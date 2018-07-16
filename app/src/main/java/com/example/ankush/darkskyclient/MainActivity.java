@@ -4,7 +4,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.ankush.darkskyclient.events.EventError;
 import com.example.ankush.darkskyclient.events.WeatherEvent;
 import com.example.ankush.darkskyclient.models.Currently;
 import com.example.ankush.darkskyclient.models.Weather;
@@ -61,6 +63,11 @@ public class MainActivity extends AppCompatActivity {
         Currently currently = weatherEvent.getWeather().getCurrently();
         temTextView.setText(String.valueOf(Math.round(currently.getTemperature())));
     };
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onErrorEvent(EventError eventError){
+        Toast.makeText(this, eventError.getErrorMessage(), Toast.LENGTH_SHORT).show();
+    }
 
     private void requestCurrentWeather(double lat, double lng) {
         WeatherServiceProvider weatherServiceProvider = new WeatherServiceProvider();
