@@ -10,6 +10,8 @@ import com.example.ankush.darkskyclient.models.Weather;
 import com.example.ankush.darkskyclient.services.WeatherService;
 import com.example.ankush.darkskyclient.services.WeatherServiceProvider;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -18,6 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+    @BindView(R.id.temTextView)
     TextView temTextView;
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -25,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        temTextView = findViewById(R.id.temTextView);
+        //temTextView = findViewById(R.id.temTextView);
+        ButterKnife.bind(this);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
