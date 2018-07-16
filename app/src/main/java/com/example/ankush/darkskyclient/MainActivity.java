@@ -25,6 +25,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         WeatherServiceProvider weatherServiceProvider = new WeatherServiceProvider();
-        weatherServiceProvider.getWeather();
+        weatherServiceProvider.getWeather(32.0760,72.8777);
     }
 }

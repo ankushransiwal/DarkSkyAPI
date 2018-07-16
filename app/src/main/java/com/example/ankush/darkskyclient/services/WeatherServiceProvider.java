@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class WeatherServiceProvider {
 
-    private static final String BASE_URL = "https://api.darksky.net/forecast/d7f22eb84e853202ead966b3aae24820/19.0760,72.8777/";
+    private static final String BASE_URL = "https://api.darksky.net/forecast/d7f22eb84e853202ead966b3aae24820/";
     private static final String TAG = WeatherServiceProvider.class.getSimpleName();
     private Retrofit retrofit;
 
@@ -29,9 +29,9 @@ public class WeatherServiceProvider {
 
     }
 
-    public void getWeather(){
+    public void getWeather(double lat, double lng){
         WeatherService weatherService = getRetrofit().create(WeatherService.class);
-        Call<Weather> weatherData = weatherService.getWeather();
+        Call<Weather> weatherData = weatherService.getWeather(lat, lng);
         weatherData.enqueue(new Callback<Weather>() {
             @Override
             public void onResponse(Call<Weather> call, Response<Weather> response) {
